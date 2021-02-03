@@ -1,16 +1,31 @@
 /*
-    MPU6050 Triple Axis Gyroscope & Accelerometer. Simple Accelerometer Example.
-    Read more: http://www.jarzebski.pl/arduino/czujniki-i-sensory/3-osiowy-zyroskop-i-akcelerometr-mpu6050.html
-    GIT: https://github.com/jarzebski/Arduino-MPU6050
-    Web: http://www.jarzebski.pl
-    (c) 2014 by Korneliusz Jarzebski
-*/
+ *  MPU6050 Triple Axis Gyroscope & Accelerometer. Simple Accelerometer Example.
+ *
+ *  created 03 Feb 2021
+ *  by Lars Erik Storbukås <https://github.com/storbukas>
+ *
+ *  Source: https://github.com/storbukas/MPU6050
+ *  Original source: https://github.com/jarzebski/Arduino-MPU6050>
+ *
+ *  Licensed under the GPL-3.0 License
+ *  https://www.gnu.org/licenses/gpl-3.0.en.html
+ *
+ */
 
+// ---------------------------------------------------------------------
+// INCLUDES
+//
 #include <Wire.h>
 #include <MPU6050.h>
 
+// ---------------------------------------------------------------------
+// VARIABLES
+//
 MPU6050 mpu;
 
+// ---------------------------------------------------------------------
+// SETUP
+//
 void setup() 
 {
   Serial.begin(115200);
@@ -31,6 +46,34 @@ void setup()
   checkSettings();
 }
 
+// ---------------------------------------------------------------------
+// LOOP
+//
+void loop()
+{
+  Vector rawAccel = mpu.readRawAccel();
+  Vector normAccel = mpu.readNormalizeAccel();
+
+  Serial.print(" Xraw = ");
+  Serial.print(rawAccel.XAxis);
+  Serial.print(" Yraw = ");
+  Serial.print(rawAccel.YAxis);
+  Serial.print(" Zraw = ");
+
+  Serial.println(rawAccel.ZAxis);
+  Serial.print(" Xnorm = ");
+  Serial.print(normAccel.XAxis);
+  Serial.print(" Ynorm = ");
+  Serial.print(normAccel.YAxis);
+  Serial.print(" Znorm = ");
+  Serial.println(normAccel.ZAxis);
+  
+  delay(10);
+}
+
+// ---------------------------------------------------------------------
+// FUNCTIONS
+//
 void checkSettings()
 {
   Serial.println();
@@ -68,27 +111,3 @@ void checkSettings()
   
   Serial.println();
 }
-
-void loop()
-{
-  Vector rawAccel = mpu.readRawAccel();
-  Vector normAccel = mpu.readNormalizeAccel();
-
-  Serial.print(" Xraw = ");
-  Serial.print(rawAccel.XAxis);
-  Serial.print(" Yraw = ");
-  Serial.print(rawAccel.YAxis);
-  Serial.print(" Zraw = ");
-
-  Serial.println(rawAccel.ZAxis);
-  Serial.print(" Xnorm = ");
-  Serial.print(normAccel.XAxis);
-  Serial.print(" Ynorm = ");
-  Serial.print(normAccel.YAxis);
-  Serial.print(" Znorm = ");
-  Serial.println(normAccel.ZAxis);
-  
-  delay(10);
-}
-
-

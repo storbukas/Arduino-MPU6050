@@ -1,20 +1,34 @@
 /*
-    MPU6050 Triple Axis Gyroscope & Accelerometer. Free fall detection.
-    Read more: http://www.jarzebski.pl/arduino/czujniki-i-sensory/3-osiowy-zyroskop-i-akcelerometr-mpu6050.html
-    GIT: https://github.com/jarzebski/Arduino-MPU6050
-    Web: http://www.jarzebski.pl
-    (c) 2014 by Korneliusz Jarzebski
-*/
+ *  MPU6050 Triple Axis Gyroscope & Accelerometer. Free fall detection.
+ *
+ *  created 03 Feb 2021
+ *  by Lars Erik Storbukås <https://github.com/storbukas>
+ *
+ *  Source: https://github.com/storbukas/MPU6050
+ *  Original source: https://github.com/jarzebski/Arduino-MPU6050>
+ *
+ *  Licensed under the GPL-3.0 License
+ *  https://www.gnu.org/licenses/gpl-3.0.en.html
+ *
+ */
 
+// ---------------------------------------------------------------------
+// INCLUDES
+//
 #include <Wire.h>
 #include <MPU6050.h>
 
+// ---------------------------------------------------------------------
+// VARIABLES
+//
 MPU6050 mpu;
-
 boolean ledState = false;
 boolean freefallDetected = false;
 int freefallBlinkCount = 0;
 
+// ---------------------------------------------------------------------
+// SETUP
+//
 void setup() 
 {
   Serial.begin(115200);
@@ -46,6 +60,39 @@ void setup()
   attachInterrupt(0, doInt, RISING);
 }
 
+// ---------------------------------------------------------------------
+// LOOP
+//
+void loop()
+{
+  Vector rawAccel = mpu.readRawAccel();
+  Activites act = mpu.readActivites();
+
+  Serial.print(act.isFreeFall);
+  Serial.print("\n");
+  
+  if (freefallDetected)
+  {
+    ledState = !ledState;
+
+    digitalWrite(4, ledState);
+
+    freefallBlinkCount++;
+
+    if (freefallBlinkCount == 20)
+    {
+      freefallDetected = false;
+      ledState = false;
+      digitalWrite(4, ledState);
+    }
+  }
+  
+  delay(100);
+}
+
+// ---------------------------------------------------------------------
+// FUNCTIONS
+//
 void doInt()
 {
   freefallBlinkCount = 0;
@@ -112,32 +159,4 @@ void checkSettings()
   }  
   
   Serial.println();
-}
-
-void loop()
-{
-  Vector rawAccel = mpu.readRawAccel();
-  Activites act = mpu.readActivites();
-
-  Serial.print(act.isFreeFall);
-  Serial.print("\n");
-  
-  if (freefallDetected)
-  {
-    ledState = !ledState;
-
-    digitalWrite(4, ledState);
-
-    freefallBlinkCount++;
-
-    if (freefallBlinkCount == 20)
-    {
-      freefallDetected = false;
-      ledState = false;
-      digitalWrite(4, ledState);
-    }
-  }
-  
-  delay(100);
-  
 }

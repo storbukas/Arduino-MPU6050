@@ -1,16 +1,31 @@
 /*
-    MPU6050 Triple Axis Gyroscope & Accelerometer. Motion detection.
-    Read more: http://www.jarzebski.pl/arduino/czujniki-i-sensory/3-osiowy-zyroskop-i-akcelerometr-mpu6050.html
-    GIT: https://github.com/jarzebski/Arduino-MPU6050
-    Web: http://www.jarzebski.pl
-    (c) 2014 by Korneliusz Jarzebski
-*/
+ *  MPU6050 Triple Axis Gyroscope & Accelerometer. Motion detection.
+ *
+ *  created 03 Feb 2021
+ *  by Lars Erik Storbukås <https://github.com/storbukas>
+ *
+ *  Source: https://github.com/storbukas/MPU6050
+ *  Original source: https://github.com/jarzebski/Arduino-MPU6050>
+ *
+ *  Licensed under the GPL-3.0 License
+ *  https://www.gnu.org/licenses/gpl-3.0.en.html
+ *
+ */
 
+// ---------------------------------------------------------------------
+// INCLUDES
+//
 #include <Wire.h>
 #include <MPU6050.h>
 
+// ---------------------------------------------------------------------
+// VARIABLES
+//
 MPU6050 mpu;
 
+// ---------------------------------------------------------------------
+// SETUP
+//
 void setup() 
 {
   Serial.begin(115200);
@@ -46,6 +61,51 @@ void setup()
   digitalWrite(7, LOW);  
 }
 
+// ---------------------------------------------------------------------
+// LOOP
+//
+void loop()
+{
+  Vector rawAccel = mpu.readRawAccel();
+  Activites act = mpu.readActivites();
+
+  if (act.isActivity)
+  {
+    digitalWrite(4, HIGH);
+  } else
+  {
+    digitalWrite(4, LOW);
+  }
+
+  if (act.isInactivity)
+  {
+    digitalWrite(7, HIGH);
+  } else
+  {
+    digitalWrite(7, LOW);
+  }
+
+  Serial.print(act.isActivity);
+  Serial.print(act.isInactivity);
+
+  Serial.print(" ");
+  Serial.print(act.isPosActivityOnX);
+  Serial.print(act.isNegActivityOnX);
+  Serial.print(" ");
+
+  Serial.print(act.isPosActivityOnY);
+  Serial.print(act.isNegActivityOnY);
+  Serial.print(" ");
+
+  Serial.print(act.isPosActivityOnZ);
+  Serial.print(act.isNegActivityOnZ);
+  Serial.print("\n");
+  delay(50);
+}
+
+// ---------------------------------------------------------------------
+// FUNCTIONS
+//
 void checkSettings()
 {
   Serial.println();
@@ -113,44 +173,3 @@ void checkSettings()
   
   Serial.println();
 }
-
-void loop()
-{
-  Vector rawAccel = mpu.readRawAccel();
-  Activites act = mpu.readActivites();
-
-  if (act.isActivity)
-  {
-    digitalWrite(4, HIGH);
-  } else
-  {
-    digitalWrite(4, LOW);
-  }
-
-  if (act.isInactivity)
-  {
-    digitalWrite(7, HIGH);
-  } else
-  {
-    digitalWrite(7, LOW);
-  }
-
-  Serial.print(act.isActivity);
-  Serial.print(act.isInactivity);
-
-  Serial.print(" ");
-  Serial.print(act.isPosActivityOnX);
-  Serial.print(act.isNegActivityOnX);
-  Serial.print(" ");
-
-  Serial.print(act.isPosActivityOnY);
-  Serial.print(act.isNegActivityOnY);
-  Serial.print(" ");
-
-  Serial.print(act.isPosActivityOnZ);
-  Serial.print(act.isNegActivityOnZ);
-  Serial.print("\n");
-  delay(50);
-}
-
-
